@@ -55,9 +55,10 @@ describe('Basic user flow for Website', () => {
     const productItem = await page.$('product-item');
     const shadowRoot = getProperty('shadowRoot');
     var button = shadowRoot.querySelector('button');
+    button.click();
     var buttonInnerText = button.innerText;
     var textValue = buttonInnerText.jsonValue();
-    
+    expect(textValue).toBe("Remove from Cart");
   }, 2500);
 
   // Check to make sure that after clicking "Add to Cart" on every <product-item> that the Cart
@@ -68,6 +69,18 @@ describe('Basic user flow for Website', () => {
     // Query select all of the <product-item> elements, then for every single product element
     // get the shadowRoot and query select the button inside, and click on it.
     // Check to see if the innerText of #cart-count is 20
+    const productItemList = await page.$$('product-item');
+    for (let i = 0; i < productItemList.length; i++) {
+      const shadowRoot = getProperty('shadowRoot');
+      var button = shadowRoot.querySelector('button');
+      button.click();
+      var buttonInnerText = button.innerText;
+      var textValue = buttonInnerText.jsonValue();
+      expect(textValue).toBe(20);
+    }
+    const getCartCount = shadowRoot.querySelector('#cart-count')
+    expect(getCartCount.innerText.jsonValue()).toBe(20);
+    
   }, 10000);
 
   // Check to make sure that after you reload the page it remembers all of the items in your cart
@@ -77,6 +90,7 @@ describe('Basic user flow for Website', () => {
     // Reload the page, then select all of the <product-item> elements, and check every
     // element to make sure that all of their buttons say "Remove from Cart".
     // Also check to make sure that #cart-count is still 20
+
   }, 10000);
 
   // Check to make sure that the cart in localStorage is what you expect
