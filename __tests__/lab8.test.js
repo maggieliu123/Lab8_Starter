@@ -53,7 +53,7 @@ describe('Basic user flow for Website', () => {
     // Once you have the button, you can click it and check the innerText property of the button.
     // Once you have the innerText property, use innerText.jsonValue() to get the text value of it
     const productItem = await page.$('product-item');
-    const shadowRoot = getProperty('shadowRoot');
+    const shadowRoot = productItem.getProperty('shadowRoot');
     var button = shadowRoot.querySelector('button');
     button.click();
     var buttonInnerText = button.innerText;
@@ -71,14 +71,11 @@ describe('Basic user flow for Website', () => {
     // Check to see if the innerText of #cart-count is 20
     const productItemList = await page.$$('product-item');
     for (let i = 0; i < productItemList.length; i++) {
-      const shadowRoot = getProperty('shadowRoot');
+      const shadowRoot = productItemList.getProperty('shadowRoot');
       var button = shadowRoot.querySelector('button');
       button.click();
-      var buttonInnerText = button.innerText;
-      var textValue = buttonInnerText.jsonValue();
-      expect(textValue).toBe(20);
     }
-    const getCartCount = shadowRoot.querySelector('#cart-count')
+    const getCartCount = document.querySelector('#cart-count');
     expect(getCartCount.innerText.jsonValue()).toBe(20);
     
   }, 10000);
@@ -90,6 +87,18 @@ describe('Basic user flow for Website', () => {
     // Reload the page, then select all of the <product-item> elements, and check every
     // element to make sure that all of their buttons say "Remove from Cart".
     // Also check to make sure that #cart-count is still 20
+    await page.reload();
+    const productItems = await page.$$('product-item');
+    for (let i = 0; i < productItems.length; i++) {
+      const shadowRoot = productItems.getProperty('shadowRoot');
+      var button = shadowRoot.querySelector('button');
+      button.click();
+      var buttonInnerText = button.innerText;
+      var textValue = buttonInnerText.jsonValue();
+      expect(textValue).toBe("Remove from Cart");
+    }
+    const getCartCount = document.querySelector('#cart-count');
+    expect(getCartCount.innerText.jsonValue()).toBe(20);
 
   }, 10000);
 
